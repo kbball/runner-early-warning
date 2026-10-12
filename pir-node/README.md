@@ -56,6 +56,6 @@ Compiles (RAM 6.5%, flash 15.4%). **Not yet run on hardware.** Known gaps:
 
 ## Board support
 
-PlatformIO has no XIAO nRF52840 board or pin map, so `boards/` and `variants/xiao_nrf52/` are copied from
-the MeshCore repo (MIT); see `variants/xiao_nrf52/NOTICE`. No MeshCore firmware code is used.
+PlatformIO has no XIAO nRF52840 board or pin map, so `../common/xiao_nrf52840/` (shared with the trigger board)
+holds copies from the MeshCore repo (MIT); see `../common/xiao_nrf52840/NOTICE`. No MeshCore firmware code is used.
 The linker script is the Adafruit core's v6 script with the flash start moved for SoftDevice 7.3.0.
