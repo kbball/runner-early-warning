@@ -21,7 +21,11 @@ The design moved to a PIR node plus a camera node. The stages above describe the
 now organised per target:
 
 - `pir-node/` XIAO nRF52840 + PIR: trigger and heartbeat beacons (written and compiles; not run on hardware yet).
-- `common/` shared code with host unit tests (`TriggerPacket`).
+- `trigger-node/` XIAO nRF52840 on the camera node: BLE scanner, drives the boost EN, reads the camera's UART,
+  logs everything over USB serial (written and compiles; not run on hardware yet).
+- `common/` shared code with host unit tests (`cd common && pio test -e native`): `TriggerPacket` (the BLE packet),
+  `CameraMsg` (the camera's UART lines), `TriggerLogic` (packet-group tracking and the enable window), plus the
+  XIAO nRF52840 board definition used by both nRF projects.
 - `hardware/` KiCad project and schematic generator for the carrier board.
-- Still to write: the camera node's trigger board (BLE scanner, drives the boost EN, serial log) and the
-  ESP32-S3 camera firmware (stages 1-4 above).
+- Still to write: the ESP32-S3 camera firmware (stages 1-4 above), now printing the `EW,...` lines the trigger
+  board reads, and the MeshCore board's UART hook.
