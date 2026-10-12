@@ -1,0 +1,7 @@
+variant.h, variant.cpp and ../../boards/seeed-xiao-afruitnrf52-nrf52840.json are the XIAO nRF52840
+board definition and pin map. PlatformIO does not ship them, so they are copied unchanged from the
+MeshCore repository (variants/xiao_nrf52 and boards/, commit 0679dbef), which is MIT licensed:
+
+  MIT License, Copyright (c) 2025 Scott Powell / rippleradios.com
+
+No MeshCore firmware code is used by the PIR node. Only the board and pin definitions are borrowed.
