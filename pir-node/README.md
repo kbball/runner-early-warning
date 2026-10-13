@@ -33,9 +33,16 @@ One CSV line per event: `ms,event,seq,vbat_mv`
 
 ```
 pio run                 # build
-pio run -t upload       # flash over USB (double-tap reset first if the board is not in its bootloader)
+pio run -t upload --upload-port /dev/cu.usbmodemXXXX   # flash over USB
 pio device monitor
 ```
+
+**Flash from the bootloader.** Double-tap reset first; the board then shows a `XIAO-SENSE` (or `XIAO-BOOT`)
+drive and a serial port. The automatic 1200-baud "touch" that PlatformIO uses to reset a running app into the
+bootloader failed twice on this Mac and left the board with no valid app. It then sat in the bootloader, which
+looks like a dead board but is not: replug or double-tap and flash again. Don't keep a serial monitor open on
+the port while uploading. Catch the boot header by connecting within about 1.5 s of boot (the firmware waits
+that long for USB), or just read the heartbeats.
 
 Build flags (see `platformio.ini`): `LOG_SERIAL` and `LED_ON_TRIGGER` should be 0 for current
 measurements, since USB and the LED both add draw. `TX_POWER_DBM`, `HEARTBEAT_MS` and the burst
@@ -45,14 +52,22 @@ Unit tests for the shared packet code run on the host: `cd ../common && pio test
 
 ## Status
 
-Compiles (RAM 6.5%, flash 15.4%). **Not yet run on hardware.** Known gaps:
+Compiles (RAM 6.5%, flash 15.4%). **Flashed and running on a board (2026-10-12), PIR not attached.**
+Boot log is clean: the header and config lines print, then a `HEARTBEAT` every 5000 ms exactly (uptime
+5703, 10702, 15702, 20702 ms) with the sequence counting up from 0, and no spurious trigger or ignored-edge
+lines with D0 floating. Not yet checked: a real trigger, and anything over the air.
+
+The board is a XIAO nRF52840 **Sense** (bootloader: UF2 0.6.1, SoftDevice S140 7.3.0, Seeed_XIAO_nRF52840_Sense).
+The S140 7.3.0 match confirms the linker script start address (0x27000). The Sense variant has an IMU and a
+mic that the plain board lacks; check they are off, since they would add to the sleep current.
+
+Known gaps:
 
 - Battery voltage uses the XIAO divider (`VBAT_DIVIDER_X1000`, 2953 from the board's 1M + 512k
-  resistors). It needs calibrating against a meter and is only valid with the 18650 on the BAT pads.
+  resistors). With no battery on the pads it reads garbage (356-994 mV), as expected. It needs calibrating
+  against a meter with the 18650 on the BAT pads.
 - 1 Mbps legacy advertising only. Coded PHY (longer range) is a later step if the link test needs it.
 - Sleep current, the real PIR warm-up time, and range at 20 m are all unmeasured (test plan stages 1 and 2).
-- The XIAO nRF52840 bootloader ships with SoftDevice S140 7.3.0, which is why the linker script starts
-  flash at 0x27000. Confirm against the actual board on first flash.
 
 ## Board support
 
