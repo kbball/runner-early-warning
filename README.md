@@ -29,6 +29,8 @@ now organised per target:
   `CameraMsg` (the camera's UART lines), `TriggerLogic` (packet-group tracking and the enable window), `MeshCoreFrames` (companion-protocol frames), plus the
   XIAO nRF52840 board definition used by both nRF projects.
 - `hardware/` KiCad project and schematic generator for the carrier board.
+- `docs/pages/` the breadboard layout page (with its generator) and the carrier concept render.
+- `tools/serial_capture.py` timestamped serial capture that survives a board resetting; used for bench checks.
 - The MeshCore board runs the send-only runner alert firmware, which lives in the MeshCore fork
   (`kbball/MeshCore-tracker`, branch `feature/runner-alert`), not in this repository.
 - Still to write: a real person-detection model for the camera (stage 3 above).

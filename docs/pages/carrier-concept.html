@@ -1,0 +1,338 @@
+<title>Runner Early-Warning Carrier</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;600&display=swap">
+<style>
+  /* Layout: one page, board render first, then the power-up sequence, pin use, and what is still open. */
+  :root {
+    --bg: #f2f4f0;
+    --fg: #19211d;
+    --muted: #55625b;
+    --line: #cdd4cd;
+    --panel: #e8ece6;
+    --copper: #c98a1d;
+    --pcb: #1f5a45;
+    --pcb-edge: #123628;
+    --silk: #eef2e6;
+    --pad: #e6c46e;
+    --hole: #0c120f;
+    --part: #1d2327;
+    --mod: #26323a;
+    --mod-edge: #6f808b;
+    --plastic: #e7e3d3;
+    --ceramic: #c9a06a;
+    --silver: #b9c0c3;
+    --sans: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+    --mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0e1411; --fg: #e3e9e4; --muted: #94a199; --line: #28332d; --panel: #16201b;
+      --copper: #e0a640; --pcb: #1b4d3a; --pcb-edge: #0b241a; color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0e1411; --fg: #e3e9e4; --muted: #94a199; --line: #28332d; --panel: #16201b;
+    --copper: #e0a640; --pcb: #1b4d3a; --pcb-edge: #0b241a; color-scheme: dark;
+  }
+  body { background: var(--bg); color: var(--fg); font-family: var(--sans); font-size: 16px; line-height: 1.55; padding-inline: 16px; padding-block: 28px 56px; }
+  main { max-width: 860px; margin: 0 auto; display: flex; flex-direction: column; gap: 32px; }
+  h1 { font-size: clamp(1.6rem, 4vw, 2.2rem); line-height: 1.15; margin: 0; font-weight: 600; text-wrap: balance; }
+  h2 { font-size: 1.05rem; margin: 0 0 8px; font-weight: 600; }
+  p { margin: 0; max-width: 65ch; }
+  .lede { color: var(--muted); font-size: 1.05rem; margin-top: 10px; }
+  .tag { font-family: var(--mono); font-size: 0.75rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--copper); margin-bottom: 10px; }
+  figure { margin: 0; display: flex; flex-direction: column; gap: 10px; }
+  .scroll { overflow-x: auto; border-radius: 6px; }
+  .scroll svg { display: block; min-width: 600px; width: 100%; height: auto; }
+  figcaption { color: var(--muted); font-size: 0.9rem; max-width: 70ch; }
+  .legend { display: flex; flex-wrap: wrap; gap: 6px 20px; font-family: var(--mono); font-size: 0.78rem; color: var(--muted); }
+  .legend span { display: inline-flex; align-items: center; gap: 8px; }
+  .legend i { display: inline-block; width: 28px; height: 0; border-top: 4px solid var(--copper); }
+  .legend i.air { border-top: 1.5px dashed var(--muted); }
+  .legend i.pad { width: 11px; height: 11px; border: 0; border-radius: 50%; background: var(--pad); outline: 3px solid var(--hole); outline-offset: -6px; }
+  ul.parts { margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px 28px; }
+  ul.parts li { border-top: 1px solid var(--line); padding-top: 8px; font-size: 0.93rem; }
+  ul.parts b { display: block; font-weight: 600; }
+  ul.parts span { color: var(--muted); }
+  ol.open { margin: 0; padding-left: 1.2rem; display: flex; flex-direction: column; gap: 6px; max-width: 68ch; }
+  .small { font-size: 0.88rem; color: var(--muted); }
+  code { font-family: var(--mono); font-size: 0.85em; }
+  table.pins { border-collapse: collapse; width: 100%; min-width: 440px; font-size: 0.9rem; }
+  table.pins th, table.pins td { text-align: left; padding: 6px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  table.pins th { font-family: var(--mono); font-size: 0.75rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+  table.pins td:first-child { font-family: var(--mono); white-space: nowrap; }
+  table.pins tr.use td:first-child { color: var(--copper); font-weight: 500; }
+  section { display: flex; flex-direction: column; gap: 10px; }
+  .note { background: var(--panel); border-radius: 6px; padding: 12px 14px; font-size: 0.9rem; color: var(--muted); max-width: 70ch; }
+
+  /* SVG text and shapes */
+  svg text { font-family: var(--mono); }
+  .silk { fill: none; stroke: var(--silk); stroke-width: 1.5; stroke-linejoin: round; }
+  .st { fill: var(--silk); font-size: 11px; font-weight: 500; letter-spacing: 0.04em; }
+  .st-sm { fill: var(--silk); font-size: 9px; opacity: 0.9; }
+  .st-lg { fill: var(--silk); font-size: 15px; font-weight: 500; letter-spacing: 0.08em; }
+  .tr { fill: none; stroke: var(--copper); stroke-width: 5; stroke-linecap: round; stroke-linejoin: round; }
+  .air { fill: none; stroke: var(--silk); stroke-width: 1.2; stroke-dasharray: 5 4; opacity: 0.75; }
+  .pad { fill: var(--pad); }
+  .hole { fill: var(--hole); }
+  .body { fill: var(--part); stroke: #000; stroke-opacity: 0.5; stroke-width: 1; }
+  .mod { fill: var(--mod); stroke: var(--mod-edge); stroke-width: 1.5; fill-opacity: 0.94; }
+  .plastic { fill: var(--plastic); stroke: #8c8672; stroke-width: 1; }
+  .mt { fill: var(--silk); font-size: 12px; font-weight: 500; }
+  /* sequence figure */
+  .bx { fill: var(--panel); stroke: var(--line); stroke-width: 1.5; }
+  .bx.on { stroke: var(--copper); stroke-width: 2.5; }
+  .bt { fill: var(--fg); font-size: 12px; font-weight: 500; }
+  .bs { fill: var(--muted); font-size: 10.5px; }
+  .al { fill: var(--muted); font-size: 11px; }
+  .ln { stroke: var(--fg); stroke-width: 1.6; fill: none; }
+  .br { stroke: var(--copper); stroke-width: 2; fill: none; }
+  .brt { fill: var(--copper); font-size: 11px; font-weight: 500; letter-spacing: 0.08em; }
+</style>
+
+<main>
+  <header>
+    <div class="tag">Concept render · rev B · not a layout</div>
+    <h1>Runner early-warning carrier board</h1>
+    <p class="lede">One through-hole board that is the whole node: a XIAO nRF52840 with Wio-SX1262 radio running MeshCore, a XIAO ESP32-S3 camera, a socketed charger and 5 V boost, the PIR on the back face, and an IR gate for night runs. Rev A, with the RAK19007 and RAK4631, comes first as the stepping stone.</p>
+  </header>
+
+  <figure>
+    <div class="scroll">
+      <svg viewBox="0 0 700 600" role="img" aria-label="Top view of a concept carrier board. Across the top are a socketed 5 V boost module, and a bq24074 charger module with USB-C and DC inputs at the top edge. Across the bottom are the camera XIAO ESP32-S3 and the controller XIAO nRF52840 with Wio-SX1262 radio. A PIR sits on the back face at the lower right, and an IR switch and connector sit under the camera.">
+        <defs>
+          <g id="pth"><circle r="7.5" class="pad"/><circle r="3" class="hole"/></g>
+        </defs>
+
+        <!-- board -->
+        <rect x="20" y="20" width="650" height="560" rx="10" fill="var(--pcb)" stroke="var(--pcb-edge)" stroke-width="3"/>
+        <g>
+          <circle cx="45" cy="45" r="11" class="hole"/><circle cx="45" cy="45" r="17" class="silk"/>
+          <circle cx="645" cy="45" r="11" class="hole"/><circle cx="645" cy="45" r="17" class="silk"/>
+          <circle cx="45" cy="555" r="11" class="hole"/><circle cx="45" cy="555" r="17" class="silk"/>
+          <circle cx="645" cy="555" r="11" class="hole"/><circle cx="645" cy="555" r="17" class="silk"/>
+        </g>
+        <text x="350" y="548" class="st-lg">EW-NODE CARRIER</text>
+        <text x="350" y="565" class="st-sm">REV B · CONCEPT · ~65 × 56 MM</text>
+
+        <!-- power traces (solid copper) -->
+        <polyline class="tr" points="59,145 59,350"/>
+        <polyline class="tr" points="59,305 190,305"/>
+        <polyline class="tr" points="355,235 355,260 109,260 109,145"/>
+        <polyline class="tr" points="278,260 278,430"/>
+        <polyline class="tr" points="620,102 560,102 560,262 430,262 430,235"/>
+
+        <!-- signal airwires (nets still to route) -->
+        <line class="air" x1="327" y1="350" x2="134" y2="145"/>
+        <line class="air" x1="211" y1="508" x2="327" y2="508"/>
+        <line class="air" x1="590" y1="485" x2="479" y2="350"/>
+        <line class="air" x1="565" y1="485" x2="429" y2="508"/>
+        <line class="air" x1="84" y1="508" x2="140" y2="548"/>
+
+        <!-- MiniBoost -->
+        <rect x="40" y="50" width="178" height="113" rx="5" class="mod"/>
+        <text x="129" y="78" text-anchor="middle" class="mt">ADAFRUIT MINIBOOST</text>
+        <text x="129" y="94" text-anchor="middle" class="st-sm">5 V @ 1 A · TPS61023 · socketed</text>
+        <use href="#pth" x="59" y="145"/><use href="#pth" x="84" y="145"/><use href="#pth" x="109" y="145"/><use href="#pth" x="134" y="145"/>
+        <g class="st-sm" text-anchor="middle">
+          <text x="59" y="130">OUT</text><text x="84" y="130">GND</text><text x="109" y="130">IN</text><text x="134" y="130">EN</text>
+        </g>
+
+        <!-- Schottky, standing -->
+        <circle cx="59" cy="225" r="14" class="body"/>
+        <path d="M48 218 A14 14 0 0 1 70 218" fill="none" stroke="var(--silver)" stroke-width="3"/>
+        <use href="#pth" x="59" y="205"/><use href="#pth" x="59" y="245"/>
+        <text x="76" y="222" class="st-sm">D1</text>
+        <text x="76" y="233" class="st-sm">SCHOTTKY</text>
+
+        <!-- bulk cap and ceramics on the camera 5 V rail -->
+        <circle cx="115" cy="305" r="24" class="body"/>
+        <circle cx="115" cy="305" r="18" fill="none" stroke="var(--mod-edge)" stroke-width="1.2"/>
+        <text x="115" y="303" text-anchor="middle" class="st-sm">470 µF</text>
+        <text x="115" y="313" text-anchor="middle" class="st-sm">C1</text>
+        <circle cx="165" cy="305" r="9" fill="var(--ceramic)" stroke="#7b5d33"/>
+        <circle cx="190" cy="305" r="9" fill="var(--ceramic)" stroke="#7b5d33"/>
+        <text x="165" y="288" text-anchor="middle" class="st-sm">10 µ</text>
+        <text x="190" y="288" text-anchor="middle" class="st-sm">0.1 µ</text>
+
+        <!-- bq24074 charger, inputs at the top edge -->
+        <rect x="322" y="6" width="56" height="26" rx="3" fill="var(--silver)" stroke="#7d8588"/>
+        <rect x="410" y="6" width="64" height="34" rx="3" class="body"/>
+        <rect x="250" y="50" width="260" height="200" rx="6" class="mod"/>
+        <text x="380" y="92" text-anchor="middle" class="mt">ADAFRUIT bq24074</text>
+        <text x="380" y="108" text-anchor="middle" class="st-sm">USB-C · DC · 6 V+ SOLAR IN</text>
+        <text x="380" y="122" text-anchor="middle" class="st-sm">socketed, power-path charger</text>
+        <rect x="468" y="150" width="36" height="56" rx="3" class="plastic"/>
+        <text x="486" y="220" text-anchor="middle" class="st-sm">CELL</text>
+        <text x="486" y="231" text-anchor="middle" class="st-sm">JST</text>
+        <use href="#pth" x="355" y="235"/><use href="#pth" x="380" y="235"/><use href="#pth" x="430" y="235"/>
+        <g class="st-sm" text-anchor="middle"><text x="355" y="221">LOAD</text><text x="380" y="221">GND</text><text x="430" y="221">DC IN</text></g>
+
+        <!-- solar panel input, JST-PH 2-pin -->
+        <rect x="596" y="80" width="48" height="64" rx="3" class="plastic"/>
+        <use href="#pth" x="620" y="102"/><use href="#pth" x="620" y="122"/>
+        <text x="620" y="162" text-anchor="middle" class="st">SOLAR</text>
+        <text x="620" y="174" text-anchor="middle" class="st-sm">6 V+ PANEL</text>
+
+        <!-- camera XIAO ESP32-S3 Sense, USB facing the left edge -->
+        <rect x="45" y="340" width="188" height="20" rx="3" class="silk"/>
+        <rect x="45" y="498" width="188" height="20" rx="3" class="silk"/>
+        <rect x="12" y="415" width="22" height="40" rx="3" fill="var(--silver)" stroke="#7d8588"/>
+        <rect x="32" y="340" width="212" height="178" rx="6" class="mod"/>
+        <rect x="204" y="393" width="34" height="34" rx="4" class="body"/>
+        <circle cx="221" cy="410" r="10" fill="none" stroke="var(--mod-edge)" stroke-width="2"/>
+        <circle cx="221" cy="410" r="4" fill="var(--mod-edge)"/>
+        <text x="120" y="420" text-anchor="middle" class="mt">XIAO ESP32-S3</text>
+        <text x="120" y="436" text-anchor="middle" class="mt">Sense · camera</text>
+        <text x="120" y="454" text-anchor="middle" class="st-sm">powered by the boost</text>
+        <g>
+          <use href="#pth" x="59" y="350"/><use href="#pth" x="84" y="350"/><use href="#pth" x="110" y="350"/><use href="#pth" x="135" y="350"/><use href="#pth" x="161" y="350"/><use href="#pth" x="186" y="350"/><use href="#pth" x="211" y="350"/>
+          <use href="#pth" x="59" y="508"/><use href="#pth" x="84" y="508"/><use href="#pth" x="110" y="508"/><use href="#pth" x="135" y="508"/><use href="#pth" x="161" y="508"/><use href="#pth" x="186" y="508"/><use href="#pth" x="211" y="508"/>
+        </g>
+        <g class="st-sm" text-anchor="middle">
+          <text x="59" y="374">5V</text><text x="84" y="374">GND</text><text x="110" y="374">3V3</text><text x="135" y="374">D10</text><text x="161" y="374">D9</text><text x="186" y="374">D8</text><text x="211" y="374">D7</text>
+          <text x="59" y="494">D0</text><text x="84" y="494">D1</text><text x="110" y="494">D2</text><text x="135" y="494">D3</text><text x="161" y="494">D4</text><text x="186" y="494">D5</text><text x="211" y="494">D6</text>
+        </g>
+
+        <!-- controller: XIAO nRF52840 + Wio-SX1262, USB facing the right -->
+        <rect x="313" y="340" width="188" height="20" rx="3" class="silk"/>
+        <rect x="313" y="498" width="188" height="20" rx="3" class="silk"/>
+        <rect x="510" y="415" width="22" height="40" rx="3" fill="var(--silver)" stroke="#7d8588"/>
+        <rect x="300" y="340" width="212" height="178" rx="6" class="mod"/>
+        <rect x="466" y="386" width="22" height="22" rx="3" class="body"/>
+        <text x="477" y="401" text-anchor="middle" class="st-sm">u.FL</text>
+        <line x1="488" y1="397" x2="590" y2="397" stroke="var(--silk)" stroke-width="2"/>
+        <text x="596" y="401" class="st-sm">ANTENNA</text>
+        <text x="400" y="420" text-anchor="middle" class="mt">XIAO nRF52840</text>
+        <text x="400" y="436" text-anchor="middle" class="mt">+ Wio-SX1262</text>
+        <text x="400" y="454" text-anchor="middle" class="st-sm">MeshCore · always on</text>
+        <g>
+          <use href="#pth" x="327" y="350"/><use href="#pth" x="352" y="350"/><use href="#pth" x="378" y="350"/><use href="#pth" x="403" y="350"/><use href="#pth" x="429" y="350"/><use href="#pth" x="454" y="350"/><use href="#pth" x="479" y="350"/>
+          <use href="#pth" x="327" y="508"/><use href="#pth" x="352" y="508"/><use href="#pth" x="378" y="508"/><use href="#pth" x="403" y="508"/><use href="#pth" x="429" y="508"/><use href="#pth" x="454" y="508"/><use href="#pth" x="479" y="508"/>
+        </g>
+        <g class="st-sm" text-anchor="middle">
+          <text x="327" y="374">D6</text><text x="352" y="374" opacity="0.5">D5</text><text x="378" y="374" opacity="0.5">D4</text><text x="403" y="374" opacity="0.5">D3</text><text x="429" y="374" opacity="0.5">D2</text><text x="454" y="374" opacity="0.5">D1</text><text x="479" y="374">D0</text>
+          <text x="327" y="494">D7</text><text x="352" y="494" opacity="0.5">D8</text><text x="378" y="494" opacity="0.5">D9</text><text x="403" y="494" opacity="0.5">D10</text><text x="429" y="494">3V3</text><text x="454" y="494">GND</text><text x="479" y="494">5V</text>
+        </g>
+        <use href="#pth" x="278" y="430"/>
+        <text x="278" y="450" text-anchor="middle" class="st-sm">BAT</text>
+
+        <!-- UART label -->
+        <text x="269" y="500" text-anchor="middle" class="st-sm">TX → RX</text>
+
+        <!-- PIR on the back face, powered from the nRF 3V3 -->
+        <circle cx="590" cy="470" r="36" class="silk" stroke-dasharray="6 4"/>
+        <use href="#pth" x="565" y="485"/><use href="#pth" x="590" y="485"/><use href="#pth" x="615" y="485"/>
+        <text x="590" y="452" text-anchor="middle" class="st">PIR</text>
+        <text x="590" y="465" text-anchor="middle" class="st-sm">BACK SIDE</text>
+        <g class="st-sm" text-anchor="middle"><text x="565" y="504">1</text><text x="590" y="504">2</text><text x="615" y="504">3</text></g>
+
+        <!-- IR gate and LED connector, under the camera -->
+        <polygon points="114,546 166,546 166,528 140,508 114,528" class="body"/>
+        <use href="#pth" x="120" y="548"/><use href="#pth" x="140" y="548"/><use href="#pth" x="160" y="548"/>
+        <text x="140" y="571" text-anchor="middle" class="st-sm">Q1 · IR GATE</text>
+        <rect x="196" y="528" width="44" height="40" rx="3" class="plastic"/>
+        <use href="#pth" x="208" y="548"/><use href="#pth" x="228" y="548"/>
+        <text x="218" y="522" text-anchor="middle" class="st">IR LED</text>
+      </svg>
+    </div>
+    <div class="legend" aria-hidden="true">
+      <span><i></i>power trace</span>
+      <span><i class="air"></i>signal net, not routed yet</span>
+      <span><i class="pad"></i>through-hole pad</span>
+    </div>
+    <figcaption>Top view, drawn roughly to scale (10 px per mm); the charger size is a placeholder. The power chain runs left to right across the top: cell into the charger, charger load output to the boost and to the nRF, boost out through the Schottky to the camera. The nRF stays on the cell the whole time; the camera is powered only when the nRF raises the boost's EN.</figcaption>
+  </figure>
+
+  <section>
+    <h2>What is on it</h2>
+    <ul class="parts">
+      <li><b>XIAO nRF52840 + Wio-SX1262</b><span>The controller and LoRa radio, running MeshCore. Always on. Replaces the RAK19007 and RAK4631.</span></li>
+      <li><b>XIAO ESP32-S3 Sense</b><span>Camera and person detection. Off between triggers, so the camera adds almost nothing to idle draw.</span></li>
+      <li><b>Adafruit bq24074 charger</b><span>Socketed, with the cell plugging into its own JST. Takes USB-C, a DC jack or a 6 V+ solar panel, which plugs into the keyed SOLAR connector on the carrier. Charges at 1 A, and keeps the load running with a dead battery.</span></li>
+      <li><b>Adafruit MiniBoost 5 V</b><span>TPS61023, 5 V at up to 1 A. Its EN pin is driven by the nRF, and the product page says the output is fully disconnected when disabled.</span></li>
+      <li><b>PIR, back face</b><span>Soldered on the underside so it looks down-trail while the camera looks back at the aid station. Powered from the nRF's 3V3, output to D0. Arming is by firmware.</span></li>
+      <li><b>IR gate, for night ops</b><span>Logic-level MOSFET driven from the camera's D1, switching the illuminator from the 5 V rail. The biggest load on the boost, so size the budget with it on.</span></li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Pins on the nRF side</h2>
+    <div class="scroll">
+      <table class="pins">
+        <thead><tr><th>XIAO pin</th><th>Used for</th></tr></thead>
+        <tbody>
+          <tr><td>D1 · D2 · D3 · D4 · D5</td><td>Radio: DIO1, reset, busy, chip select, RX enable</td></tr>
+          <tr><td>D8 · D9 · D10</td><td>Radio SPI: clock, MISO, MOSI</td></tr>
+          <tr class="use"><td>D0</td><td>PIR output (MeshCore calls it the user button)</td></tr>
+          <tr class="use"><td>D6</td><td>Boost EN</td></tr>
+          <tr class="use"><td>D7</td><td>UART receive, the camera's verdict. The link is one-way, so no transmit pin is needed.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="small">Read from the MeshCore <code>xiao_nrf52</code> build, not Seeed's pin-map image. MeshCore may probe I2C on D6 and D7 at startup, which could briefly disturb the UART. The radio pins are dimmed in the drawing.</p>
+  </section>
+
+  <figure>
+    <div class="scroll">
+      <svg viewBox="0 0 800 190" role="img" aria-label="Sequence from the PIR firing, through the nRF raising the boost EN, the 5 volt rail rising, the camera booting and deciding if it sees a person, to the nRF sending a MeshCore alert. The boost and camera steps are the work of this board.">
+        <defs>
+          <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 1 L9 5 L0 9 z" fill="var(--fg)"/></marker>
+        </defs>
+        <rect class="bx" x="10" y="40" width="108" height="76" rx="6"/>
+        <text class="bt" x="64" y="68" text-anchor="middle">nRF wakes</text>
+        <text class="bs" x="64" y="86" text-anchor="middle">PIR fired,</text>
+        <text class="bs" x="64" y="100" text-anchor="middle">camera is off</text>
+
+        <rect class="bx on" x="178" y="40" width="108" height="76" rx="6"/>
+        <text class="bt" x="232" y="68" text-anchor="middle">5 V rail up</text>
+        <text class="bs" x="232" y="86" text-anchor="middle">boost enabled,</text>
+        <text class="bs" x="232" y="100" text-anchor="middle">cap soaks inrush</text>
+
+        <rect class="bx on" x="346" y="40" width="108" height="76" rx="6"/>
+        <text class="bt" x="400" y="68" text-anchor="middle">Camera boots</text>
+        <text class="bs" x="400" y="86" text-anchor="middle">grabs frames,</text>
+        <text class="bs" x="400" y="100" text-anchor="middle">person or not?</text>
+
+        <rect class="bx" x="514" y="40" width="108" height="76" rx="6"/>
+        <text class="bt" x="568" y="68" text-anchor="middle">nRF gets verdict</text>
+        <text class="bs" x="568" y="86" text-anchor="middle">drops EN to</text>
+        <text class="bs" x="568" y="100" text-anchor="middle">power down</text>
+
+        <rect class="bx" x="682" y="40" width="108" height="76" rx="6"/>
+        <text class="bt" x="736" y="68" text-anchor="middle">Aid station</text>
+        <text class="bs" x="736" y="86" text-anchor="middle">MeshCore</text>
+        <text class="bs" x="736" y="100" text-anchor="middle">alert</text>
+
+        <line class="ln" x1="120" y1="78" x2="176" y2="78" marker-end="url(#ah)"/>
+        <line class="ln" x1="288" y1="78" x2="344" y2="78" marker-end="url(#ah)"/>
+        <line class="ln" x1="456" y1="78" x2="512" y2="78" marker-end="url(#ah)"/>
+        <line class="ln" x1="624" y1="78" x2="680" y2="78" marker-end="url(#ah)"/>
+        <text class="al" x="148" y="70" text-anchor="middle">EN high</text>
+        <text class="al" x="316" y="70" text-anchor="middle">power</text>
+        <text class="al" x="484" y="70" text-anchor="middle">UART</text>
+        <text class="al" x="652" y="70" text-anchor="middle">alert</text>
+
+        <path class="br" d="M178 134 V146 H454 V134"/>
+        <text class="brt" x="316" y="166" text-anchor="middle">THIS BOARD</text>
+      </svg>
+    </div>
+    <figcaption>The carrier owns the middle of this chain: it powers the camera only when the nRF asks. The boot-to-verdict time is the number the lead-time question hangs on, and it is still unmeasured (estimated 1.5 to 3 s).</figcaption>
+  </figure>
+
+  <section>
+    <h2>Before layout starts</h2>
+    <ol class="open">
+      <li>Bench-check that the MiniBoost output really drops to zero when EN is low. The product page says it does; confirm with a meter.</li>
+      <li>Stop the camera rail from running the cell flat: the MiniBoost keeps running down to roughly 2 V in, so the nRF firmware should refuse to enable it below a set battery voltage.</li>
+      <li>The XIAO nRF52840's battery pads are on its back face, so the BAT feed shown here needs a wire or a different connection. Decide how the nRF takes cell power, and avoid a second charger starting on the same cell when USB is plugged into the XIAO.</li>
+      <li>Check the bq24074 board's size, header names and whether the load output is on a header pin. Solar needs a 6 V or higher panel; the current RAK-class panel is 5.5 V at most. Also confirm how a panel connects to the module: the SOLAR connector here assumes DC-input pads on its header. If there are none, the panel goes to the DC jack through an adapter instead.</li>
+      <li>Check the pin mapping against Seeed's docs, and what MeshCore does with D0, D6 and D7 at startup.</li>
+      <li>Check the PIR's pin order and size, since AM312 modules differ. It works best 30 to 45 degrees off the trail axis, and a flat board mounts it square, so plan a stand-off or bracket.</li>
+      <li>Plan the antenna: u.FL pigtail to an SMA, and keep the radio end of the board clear.</li>
+      <li>Size the boost for the IR on: the MiniBoost gives about 800 mA at 3 V in and about 1.1 A at 3.5 V in. Then measure idle draw and size the cell, since the always-listening radio is likely the main drain.</li>
+    </ol>
+  </section>
+
+  <p class="note">Built from the design notes, not from datasheets. Module sizes, pin positions and the XIAO pin order here are approximate and need checking against the real parts before anything is ordered.</p>
+</main>
