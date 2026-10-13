@@ -23,8 +23,10 @@ now organised per target:
 - `pir-node/` XIAO nRF52840 + PIR: trigger and heartbeat beacons (flashed; heartbeats verified; PIR not attached yet).
 - `trigger-node/` XIAO nRF52840 on the camera node: BLE scanner, drives the boost EN, reads the camera's UART,
   logs everything over USB serial (flashed; receives the PIR node's heartbeats; EN and camera UART untested).
-- `camera-node/` XIAO ESP32-S3 Sense camera: boots on power-up, sends the `EW,...` lines, grabs frames, stub detector
-  (written and compiles; not run on hardware yet).
+- `camera-node/` XIAO ESP32-S3 Sense camera (ESP-IDF): boots on power-up, sends the `EW,...` lines, grabs frames and
+  scores them with Espressif's ESP-DL pedestrian model, plus a Wi-Fi setup mode with a live view and flash-saved settings.
+  Verified on hardware: boot, camera, model load and a full session, and the live view. Setup mode with the D1 switch
+  is built but not yet bench-tested; the UART path to the trigger board is untested.
 - `common/` shared code with host unit tests (`cd common && pio test -e native`): `TriggerPacket` (the BLE packet),
   `CameraMsg` (the camera's UART lines), `TriggerLogic` (packet-group tracking and the enable window), `MeshCoreFrames` (companion-protocol frames), plus the
   XIAO nRF52840 board definition used by both nRF projects.
@@ -33,7 +35,7 @@ now organised per target:
 - `tools/serial_capture.py` timestamped serial capture that survives a board resetting; used for bench checks.
 - The MeshCore board runs the send-only runner alert firmware, which lives in the MeshCore fork
   (`kbball/MeshCore-tracker`, branch `feature/runner-alert`), not in this repository.
-- Still to write: a real person-detection model for the camera (stage 3 above).
+- Still to do for the camera: tune the threshold against real footage (outdoors, night), and test the camera on the boost with the trigger board.
 
 ## License
 

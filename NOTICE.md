@@ -25,8 +25,7 @@ distribute that binary.
 | Adafruit nRF52 Arduino core (`cores/nRF5`) | LGPL-2.1-or-later (Arduino LLC, Sandeep Mistry, Adafruit), some files MIT or BSD | `pir-node`, `trigger-node` | LGPL-2.1 "or any later version" can be combined with GPL-3.0 |
 | Adafruit Bluefruit52Lib | MIT | `pir-node`, `trigger-node` | compatible |
 | Nordic S140 SoftDevice 7.3.0 and its API headers | Nordic Semiconductor proprietary license | `pir-node`, `trigger-node` | **Not part of this repository and not redistributed.** The SoftDevice already sits on the board with the Seeed bootloader; the firmware links only against its API (SVC calls). If you ever publish prebuilt firmware or a full flash image, read Nordic's license terms first. The DFU packages built here contain only the application |
-| arduino-esp32 core | LGPL-2.1-or-later | `camera-node` | same as above |
-| ESP-IDF and esp32-camera (Espressif) | Apache-2.0 | `camera-node` | Apache-2.0 is compatible with GPL-3.0 (it is not compatible with GPL-2.0-only, which is why this project is GPL-3.0 or later) |
+| ESP-IDF, esp32-camera, ESP-DL and the `pedestrian_detect` component with its PICO_S8_V1 model (Espressif) | Apache-2.0 (the components' `LICENSE` files; ESP-IDF's third-party parts carry their own, mostly permissive, licenses) | `camera-node` | Apache-2.0 is compatible with GPL-3.0 (it is not compatible with GPL-2.0-only, which is why this project is GPL-3.0 or later). The model file is fetched by the component manager at build time and flashed to a partition; it is not stored in this repository. Pulled in by `camera-node/src/idf_component.yml`; the exact versions are in `camera-node/dependencies.lock` |
 | Unity test framework | MIT | host tests in `common/` | compatible |
 
 ## Separate repositories

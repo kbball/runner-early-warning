@@ -6,13 +6,10 @@
 #include <esp_camera.h>
 
 #ifndef CAM_FRAME_SIZE
-#define CAM_FRAME_SIZE FRAMESIZE_QVGA  // 320x240
-#endif
-#ifndef CAM_JPEG_QUALITY
-#define CAM_JPEG_QUALITY 12  // 0..63, lower is better quality
+#define CAM_FRAME_SIZE FRAMESIZE_QVGA  // 320x240; the detector scales it to the model's input
 #endif
 
-// XIAO ESP32-S3 Sense camera pins (Seeed).
+// RGB565 frames: that is what the detector reads, and frame2jpg() turns them into JPEG for the viewer.
 static inline camera_config_t cameraConfig() {
   camera_config_t c = {};
   c.ledc_channel = LEDC_CHANNEL_0;
@@ -34,12 +31,12 @@ static inline camera_config_t cameraConfig() {
   c.pin_pwdn = -1;
   c.pin_reset = -1;
   c.xclk_freq_hz = 20000000;
-  c.pixel_format = PIXFORMAT_JPEG;
+  c.pixel_format = PIXFORMAT_RGB565;
   c.frame_size = CAM_FRAME_SIZE;
-  c.jpeg_quality = CAM_JPEG_QUALITY;
+  c.jpeg_quality = 12;
   c.fb_count = 2;
   c.fb_location = CAMERA_FB_IN_PSRAM;
   c.grab_mode = CAMERA_GRAB_LATEST;
+  c.sccb_i2c_port = -1;
   return c;
 }
-
