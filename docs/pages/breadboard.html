@@ -1197,7 +1197,7 @@
 <text x="210" y="298" text-anchor="middle" class="pn">D6</text>
 <text x="150" y="276" text-anchor="middle" class="pn">BAT+ / BAT- pads on the back</text>
 <rect x="382" y="211" width="96" height="89" rx="5" class="mod"/>
-<text x="430.0" y="236" text-anchor="middle" class="mt">PIR</text><text x="430.0" y="249" text-anchor="middle" class="pn">Adafruit mini PIR</text>
+<text x="430.0" y="236" text-anchor="middle" class="mt">AM312 PIR</text><text x="430.0" y="249" text-anchor="middle" class="pn">HC-SR312 mini PIR</text><text x="430.0" y="262" text-anchor="middle" class="pn">silk: pin order?</text>
 <rect x="406" y="286" width="8" height="8" class="pin"/>
 <text x="410" y="281" text-anchor="middle" class="pn">GND</text>
 <circle cx="410" cy="290" r="8.5" class="ring"/>
@@ -1238,15 +1238,12 @@
 <circle cx="190" cy="416" r="4.5" fill="#1b1b1b" class="we"/>
 <text x="300" y="118" text-anchor="middle" class="wl">3V3</text>
 <text x="300" y="366" text-anchor="middle" class="wl">PIR OUT</text>
-<rect x="506" y="211" width="96" height="89" rx="5" class="mod" stroke-dasharray="6 4" fill-opacity=".4"/>
-<text x="554" y="236" text-anchor="middle" class="mt">AM312</text><text x="554" y="249" text-anchor="middle" class="pn">HC-SR312 mini PIR</text>
-<text x="554" y="268" text-anchor="middle" class="pn">swap in, same 3 wires</text><text x="554" y="280" text-anchor="middle" class="pn">check silk for pin order</text>
 </svg>
       </div>
       <div class="legend" aria-hidden="true">
         <span><i class="sw red"></i>VBAT</span><span><i class="sw black"></i>GND</span><span><i class="sw white"></i>3V3</span><span><i class="sw yellow"></i>PIR out</span>
       </div>
-      <figcaption>The PIR node is a plain XIAO nRF52840, no LoRa radio. It runs from the 18650 through the back battery pads, so the module's own 3V3 regulator feeds the PIR. USB is only for flashing and for checking logs at the bench. The PIR faces down-trail on the test stand. The PIR is Adafruit's breadboard-friendly mini PIR (ID 4871), whose pins read GND, OUT, power left to right; it takes 3 to 12 V through its own regulator and gives a 3.3 V output that stays high about 2 s. You also own five AM312 (HC-SR312) mini PIRs. They take 2.7 to 12 V, give a 3.3 V output that stays high about 2 s, and have no adjustments. Run them side by side with the 4871: swap the same three wires (5, 6, 7) onto the AM312 and compare hold time, retrigger, range across a trail and sleep current. Read the AM312 board's silk for its VCC, OUT and GND order, since it differs from the 4871's.</figcaption>
+      <figcaption>The PIR node is a plain XIAO nRF52840, no LoRa radio. It runs from the 18650 through the back battery pads, so the module's own 3V3 regulator feeds the PIR. USB is only for flashing and for checking logs at the bench. The PIR faces down-trail on the test stand. The PIR is an AM312 (HC-SR312) mini PIR. It takes 2.7 to 12 V, gives a 3.3 V output that stays high about 2 s, and has no adjustments. Its pin order is not drawn here: read the board's silk for VCC, OUT and GND, and either place it so those pins land in columns 20, 19 and 18 or move wires 5, 6 and 7 to match.</figcaption>
     </figure>
     <div class="scroll">
       <table>
@@ -1278,8 +1275,7 @@
 <thead><tr><th>Part</th><th>Qty</th><th>Status</th></tr></thead><tbody>
 <tr><td>Half-size breadboard with jumpers (Adafruit 3314)</td><td>2</td><td>ordered</td></tr>
 <tr><td>18650 cell with JST lead (1781) and JST-PH breakout (1862)</td><td>2 each</td><td>ordered</td></tr>
-<tr><td>Mini PIR (Adafruit 4871)</td><td>2</td><td>ordered</td></tr>
-<tr><td>AM312 mini PIR (HC-SR312)</td><td>5</td><td>owned</td></tr>
+<tr><td>AM312 mini PIR (HC-SR312)</td><td>1 per PIR node</td><td>owned (5-pack)</td></tr>
 <tr><td>XIAO ESP32-S3 Sense (camera)</td><td>1</td><td>owned</td></tr>
 <tr><td>XIAO nRF52840, trigger and PIR boards</td><td>2</td><td>borrowed from LoRa stacks; two new ones to order from Seeed ($9.99 each)</td></tr>
 <tr><td>MiniBoost 5 V 1 A (Adafruit 4654)</td><td>1 per camera rig</td><td><b>not ordered yet</b> ($3.95)</td></tr>
