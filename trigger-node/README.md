@@ -72,7 +72,17 @@ pio device monitor
 
 ## Status
 
-Compiles (RAM 6.7%, flash 15.7%) and the logic is unit tested. **Not yet run on hardware.** Open points:
+Compiles (RAM 6.7%, flash 15.7%) and the logic is unit tested. **Flashed and running on a board
+(2026-10-12), with the PIR node's heartbeats received.** First desk-range check (boards a few cm apart,
+40 s): 8 heartbeat groups sent, 8 received, `gap` 0 and `reset` 0 on every line, RSSI -45 to -63 dBm,
+4-6 packets heard per 250 ms heartbeat burst (about 12 sent, at 50% scan duty), sender uptime in the packet
+matching the PIR node's own log. Not yet checked: a Trigger group (raising EN), the camera UART, range.
+
+Flashing was fiddly: the board first sat in a CDC-only `XIAO-BOOT` state (239A:810B) where neither
+PlatformIO nor `adafruit-nrfutil` got an answer. After double-tapping reset until the `XIAO-*` drive mounted,
+`pio run -t upload --upload-port ...` worked. If it fails, check for the drive, and keep serial monitors closed.
+
+Open points:
 
 - The scan duty (`SCAN_WINDOW_MS` / `SCAN_INTERVAL_MS`, default 50/100) is a guess. It trades current
   against the chance of missing a heartbeat; tune it against the always-on current budget.
