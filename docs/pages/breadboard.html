@@ -83,7 +83,7 @@
   <header>
     <div class="tag">Two-node test rig · breadboard layout</div>
     <h1>Early-warning breadboard</h1>
-    <p class="lede">The rig from the test plan, on two half-size breadboards: a camera node with one nRF (the trigger board) and a PIR node 20 m away. The camera's verdict goes to the trigger nRF, which writes everything to a USB serial log, and to the MeshCore stack (XIAO nRF52840 plus Wio-SX1262), which sits beside the breadboard on its own USB and joins last. Until the two new XIAO nRF52840 boards arrive from Seeed, the trigger and PIR nodes run on boards borrowed from the LoRa stacks; re-flash MeshCore on those before putting them back.</p>
+    <p class="lede">The rig from the test plan, on two half-size breadboards: a camera node with one nRF (the trigger board) and a PIR node 20 m away. The camera's verdict goes to the trigger nRF, which writes everything to a USB serial log, and to the MeshCore stack (XIAO nRF52840 plus Wio-SX1262 and the L76K GPS), which sits beside the breadboard on its own USB and joins last. Until the two new XIAO nRF52840 boards arrive from Seeed, the trigger and PIR nodes run on boards borrowed from the LoRa stacks; re-flash MeshCore on those before putting them back.</p>
   </header>
 
   <section>
@@ -684,15 +684,16 @@
 <path d="M430,344 L430,318" fill="none" stroke="#e8821c" stroke-width="2.2" stroke-dasharray="2 4" stroke-linecap="round"/>
 <text x="300" y="390" text-anchor="middle" class="wl" style="paint-order:stroke;stroke:var(--bb);stroke-width:4;stroke-linejoin:round">anode: boost OUT (col 14)</text>
 <text x="475" y="390" text-anchor="middle" class="wl" style="paint-order:stroke;stroke:var(--bb);stroke-width:4;stroke-linejoin:round">cathode, band: +5V wire (col 19)</text>
-<rect x="440" y="500" width="250" height="70" rx="6" class="mod"/>
+<rect x="440" y="500" width="250" height="86" rx="6" class="mod"/>
 <rect x="684" y="520" width="16" height="30" rx="3" class="usb"/>
 <text x="590" y="524" text-anchor="middle" class="mt">MeshCore stack</text>
 <text x="590" y="538" text-anchor="middle" class="pn">XIAO nRF52840 + Wio-SX1262</text>
 <text x="590" y="554" text-anchor="middle" class="pn">fit the LoRa antenna before power</text>
-<text x="565" y="588" text-anchor="middle" class="pn">USB to the computer: power + log</text>
+<text x="590" y="574" text-anchor="middle" class="pn">+ L76K on D6/D7: GPS time only</text>
+<text x="565" y="602" text-anchor="middle" class="pn">USB to the computer: power + log</text>
 <rect x="470" y="496" width="8" height="8" class="pin"/>
 <circle cx="474" cy="500" r="8.5" class="ring"/>
-<text x="460" y="520" text-anchor="middle" class="pn">D7 RX</text>
+<text x="458" y="520" text-anchor="middle" class="pn">D0 RX</text>
 <rect x="490" y="496" width="8" height="8" class="pin"/>
 <circle cx="494" cy="500" r="8.5" class="ring"/>
 <text x="506" y="520" text-anchor="middle" class="pn">GND</text>
@@ -727,7 +728,7 @@
 <tr><td>12</td><td>Trigger nRF GND (H28)</td><td>GND rail (bottom), col 28</td><td><span class='sw black'></span>black</td><td>GND</td></tr>
 <tr><td>13</td><td>C1 470 µF, C2 10 µF, C3 0.1 µF</td><td>+5V rail ↔ GND rail, cols 5, 7, 9</td><td><span class='sw parts'></span>parts</td><td>5 V decoupling</td></tr>
 <tr><td>14</td><td>Camera 3V3 pin (B3)</td><td>Camera D1 pin, GPIO2 (I2)</td><td><span class='sw part'></span>jumper, setup test only</td><td>SETUP (high at power-up = setup mode)</td></tr>
-<tr><td>15</td><td>MeshCore stack D7 RX</td><td>UART net, col 23 (I23)</td><td><span class='sw blue'></span>blue</td><td>UART, camera to both nRFs</td></tr>
+<tr><td>15</td><td>MeshCore stack D0 (Serial2 RX)</td><td>UART net, col 23 (I23)</td><td><span class='sw blue'></span>blue</td><td>UART, camera to both nRFs (not D7: the L76K uses D6/D7)</td></tr>
 <tr><td>16</td><td>MeshCore stack GND</td><td>GND rail (bottom), col 29</td><td><span class='sw black'></span>black</td><td>GND</td></tr>
       </tbody></table>
     </div>
@@ -1301,7 +1302,7 @@
 <tr><td>18650 cell with JST lead (1781) and JST-PH breakout (1862)</td><td>2 each</td><td>ordered</td></tr>
 <tr><td>AM312 mini PIR (HC-SR312)</td><td>1 per PIR node</td><td>owned (5-pack)</td></tr>
 <tr><td>XIAO ESP32-S3 Sense (camera)</td><td>1</td><td>owned</td></tr>
-<tr><td>MeshCore stack (XIAO nRF52840 + Wio-SX1262), LoRa antenna and SMA pigtail</td><td>1</td><td>owned</td></tr>
+<tr><td>MeshCore stack (XIAO nRF52840 + Wio-SX1262 + L76K GNSS), LoRa antenna and SMA pigtail</td><td>1</td><td>owned</td></tr>
 <tr><td>XIAO nRF52840, trigger and PIR boards</td><td>2</td><td>borrowed from LoRa stacks; two new ones to order from Seeed ($9.99 each)</td></tr>
 <tr><td>MiniBoost 5 V 1 A (Adafruit 4654)</td><td>1 per camera rig</td><td><b>not ordered yet</b> ($3.95)</td></tr>
 <tr><td>bq24074 charger (Adafruit 4755)</td><td>1</td><td><b>not ordered yet</b> ($14.95)</td></tr>
@@ -1344,7 +1345,7 @@
       <li>IR test: flash the <code>camera_view</code> env, open the live view, and point a TV remote at the lens while pressing a button. A bright purple-white spot means the camera passes near-IR and an 850 nm lamp will work; if not, a NoIR camera module is needed. Do this before buying any lamp.</li>
       <li>Setup mode: with the camera on USB, add jumper 14 (camera 3V3 to D1), reset, join the <code>ew-camera</code> Wi-Fi network (the 2.4 GHz antenna must be fitted) and open http://192.168.4.1/. Check the settings page, the live view and the session log, then remove the jumper.</li>
       <li>Move the PIR node out to 20 m for the link tests.</li>
-      <li>MeshCore stack last: fit the LoRa antenna first (never power the SX1262 without one), add wires 15 and 16, and power the stack from its own USB. It stays on stock MeshCore until the verdict-to-channel-message hook is written; for now confirm it receives the camera's UART lines.</li>
+      <li>MeshCore stack last: fit the LoRa antenna first (never power the SX1262 without one), add wires 15 and 16, and power the stack from its own USB. The L76K gives it GPS time only (no position), so give it a sky view; a first fix can take minutes. The camera line uses a second serial port on D0, set by build flags in the MeshCore env, because the L76K takes D6 and D7. It stays on stock MeshCore until the verdict-to-channel-message hook is written; for now confirm it receives the camera's UART lines.</li>
     </ol>
   </section>
 
