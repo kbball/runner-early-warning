@@ -20,9 +20,9 @@ Toolchain: PlatformIO (`pio`), Arduino framework.
 The design moved to a PIR node plus a camera node. The stages above describe the camera board; the repo is
 now organised per target:
 
-- `pir-node/` XIAO nRF52840 + PIR: trigger and heartbeat beacons (written and compiles; not run on hardware yet).
+- `pir-node/` XIAO nRF52840 + PIR: trigger and heartbeat beacons (flashed; heartbeats verified; PIR not attached yet).
 - `trigger-node/` XIAO nRF52840 on the camera node: BLE scanner, drives the boost EN, reads the camera's UART,
-  logs everything over USB serial (written and compiles; not run on hardware yet).
+  logs everything over USB serial (flashed; receives the PIR node's heartbeats; EN and camera UART untested).
 - `camera-node/` XIAO ESP32-S3 Sense camera: boots on power-up, sends the `EW,...` lines, grabs frames, stub detector
   (written and compiles; not run on hardware yet).
 - `common/` shared code with host unit tests (`cd common && pio test -e native`): `TriggerPacket` (the BLE packet),
