@@ -680,6 +680,10 @@
 <circle cx="130" cy="170" r="4.5" fill="#8a4fd6" class="we"/>
 <circle cx="110" cy="350" r="4.5" fill="#8a4fd6" class="we"/>
 <text x="175" y="366" text-anchor="middle" class="wl">SETUP jumper (test only)</text>
+<path d="M330,298 L330,344" fill="none" stroke="#e8821c" stroke-width="2.2" stroke-dasharray="2 4" stroke-linecap="round"/>
+<path d="M430,344 L430,318" fill="none" stroke="#e8821c" stroke-width="2.2" stroke-dasharray="2 4" stroke-linecap="round"/>
+<text x="300" y="390" text-anchor="middle" class="wl" style="paint-order:stroke;stroke:var(--bb);stroke-width:4;stroke-linejoin:round">anode: boost OUT (col 14)</text>
+<text x="475" y="390" text-anchor="middle" class="wl" style="paint-order:stroke;stroke:var(--bb);stroke-width:4;stroke-linejoin:round">cathode, band: +5V wire (col 19)</text>
 <rect x="440" y="500" width="250" height="70" rx="6" class="mod"/>
 <rect x="684" y="520" width="16" height="30" rx="3" class="usb"/>
 <text x="590" y="524" text-anchor="middle" class="mt">MeshCore stack</text>
@@ -704,7 +708,7 @@
         <span><i class="sw red"></i>VBAT</span><span><i class="sw orange"></i>+5V to camera</span><span><i class="sw black"></i>GND</span>
         <span><i class="sw green"></i>boost EN</span><span><i class="sw blue"></i>UART</span><span><i class="sw" style="background:#8a4fd6"></i>SETUP jumper (test only)</span>
       </div>
-      <figcaption>Columns run 1 to 30; rows A to E sit above the centre channel and F to J below. The XIAOs straddle the channel on rows C and G, and the MiniBoost sits on row F with its body over the channel. Orange rings mark pins that carry a wire. The trigger nRF stays on USB for the log, while the camera runs from the 18650 through the boost so its power-up is real. The camera's own USB is for flashing only; the Schottky stops the boost from being back-fed. The cell's JST lead plugs into a small JST-PH breakout (Adafruit ID 1862), which gives breadboard pins for wires 1 and 2. The dashed purple jumper (wire 14) joins the camera's 3V3 pin to D1 for the setup-mode test only; remove it afterwards.</figcaption>
+      <figcaption>Columns run 1 to 30; rows A to E sit above the centre channel and F to J below. The XIAOs straddle the channel on rows C and G, and the MiniBoost sits on row F with its body over the channel. Orange rings mark pins that carry a wire. The trigger nRF stays on USB for the log, while the camera runs from the 18650 through the boost so its power-up is real. The camera's own USB is for flashing only; the Schottky stops the boost from being back-fed. The cell's JST lead plugs into a small JST-PH breakout (Adafruit ID 1862), which gives breadboard pins for wires 1 and 2. The Schottky D1 sits in row I. Its anode leg is in column 14, the same column strip as the MiniBoost OUT pin (dotted line), and its cathode leg, the banded end, is in column 19, the strip that carries the orange +5V wire up to the rail (dotted line). Current can only flow from the boost to the camera, which stops the camera's USB from back-feeding the boost. The dashed purple jumper (wire 14) joins the camera's 3V3 pin to D1 for the setup-mode test only; remove it afterwards.</figcaption>
     </figure>
     <div class="scroll">
       <table>
@@ -716,7 +720,7 @@
 <tr><td>5</td><td>Camera GND pin (A3)</td><td>GND rail (top), col 3</td><td><span class='sw black'></span>black</td><td>GND</td></tr>
 <tr><td>6</td><td>MiniBoost IN (G12)</td><td>VBAT rail, col 12</td><td><span class='sw red'></span>red</td><td>VBAT</td></tr>
 <tr><td>7</td><td>MiniBoost GND (G13)</td><td>GND rail (bottom), col 13</td><td><span class='sw black'></span>black</td><td>GND</td></tr>
-<tr><td>8</td><td>Schottky D1</td><td>anode I14 (boost OUT), cathode I19</td><td><span class='sw part'></span>part</td><td>BOOST_OUT → +5V_CAM</td></tr>
+<tr><td>8</td><td>Schottky D1</td><td>anode I14 (same strip as boost OUT, G14), cathode I19 (banded end; same strip as wire 9 at G19)</td><td><span class='sw part'></span>part</td><td>BOOST_OUT → +5V_CAM</td></tr>
 <tr><td>9</td><td>Cathode strip (G19)</td><td>+5V rail (top), col 19</td><td><span class='sw orange'></span>orange</td><td>+5V_CAM</td></tr>
 <tr><td>10</td><td>MiniBoost EN (G15)</td><td>trigger nRF D6 (A23)</td><td><span class='sw green'></span>green</td><td>BOOST_EN</td></tr>
 <tr><td>11</td><td>Camera D6 TX (H8)</td><td>trigger nRF D7 RX (H23)</td><td><span class='sw blue'></span>blue</td><td>UART, camera to nRF</td></tr>
