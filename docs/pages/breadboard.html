@@ -83,7 +83,7 @@
   <header>
     <div class="tag">Two-node test rig · breadboard layout</div>
     <h1>Early-warning breadboard</h1>
-    <p class="lede">The rig from the test plan, on two half-size breadboards: a camera node with one nRF (the trigger board) and a PIR node 20 m away. MeshCore is left out on purpose. The camera's verdict goes to the trigger nRF, which writes everything to a USB serial log.</p>
+    <p class="lede">The rig from the test plan, on two half-size breadboards: a camera node with one nRF (the trigger board) and a PIR node 20 m away. MeshCore is left out on purpose. The camera's verdict goes to the trigger nRF, which writes everything to a USB serial log. Until the two new XIAO nRF52840 boards arrive from Seeed, the trigger and PIR nodes run on boards borrowed from the LoRa stacks; re-flash MeshCore on those before putting them back.</p>
   </header>
 
   <section>
@@ -698,6 +698,7 @@
 <tr><td>11</td><td>Camera D6 TX (H8)</td><td>trigger nRF D7 RX (H23)</td><td><span class='sw blue'></span>blue</td><td>UART, camera to nRF</td></tr>
 <tr><td>12</td><td>Trigger nRF GND (H28)</td><td>GND rail (bottom), col 28</td><td><span class='sw black'></span>black</td><td>GND</td></tr>
 <tr><td>13</td><td>C1 470 µF, C2 10 µF, C3 0.1 µF</td><td>+5V rail ↔ GND rail, cols 5, 7, 9</td><td><span class='sw parts'></span>parts</td><td>5 V decoupling</td></tr>
+<tr><td>14</td><td>Camera 3V3 pin</td><td>Camera D1 pin (GPIO2)</td><td><span class='sw part'></span>jumper, setup test only</td><td>SETUP (high at power-up = setup mode)</td></tr>
       </tbody></table>
     </div>
   </section>
@@ -1236,7 +1237,7 @@
       <div class="legend" aria-hidden="true">
         <span><i class="sw red"></i>VBAT</span><span><i class="sw black"></i>GND</span><span><i class="sw white"></i>3V3</span><span><i class="sw yellow"></i>PIR out</span>
       </div>
-      <figcaption>The PIR node is a plain XIAO nRF52840, no LoRa radio. It runs from the 18650 through the back battery pads, so the module's own 3V3 regulator feeds the PIR. USB is only for flashing and for checking logs at the bench. The PIR faces down-trail on the test stand. The PIR is Adafruit's breadboard-friendly mini PIR (ID 4871), whose pins read GND, OUT, power left to right; it takes 3 to 12 V through its own regulator and gives a 3.3 V output that stays high about 2 s.</figcaption>
+      <figcaption>The PIR node is a plain XIAO nRF52840, no LoRa radio. It runs from the 18650 through the back battery pads, so the module's own 3V3 regulator feeds the PIR. USB is only for flashing and for checking logs at the bench. The PIR faces down-trail on the test stand. The PIR is Adafruit's breadboard-friendly mini PIR (ID 4871), whose pins read GND, OUT, power left to right; it takes 3 to 12 V through its own regulator and gives a 3.3 V output that stays high about 2 s. You also own five AM312 (HC-SR312) mini PIRs. They take 2.7 to 12 V, give a 3.3 V output that stays high about 2 s, and have no adjustments. Run them side by side with the 4871: swap the same three wires (5, 6, 7) onto the AM312 and compare hold time, retrigger, range across a trail and sleep current. Read the AM312 board's silk for its VCC, OUT and GND order, since it differs from the 4871's.</figcaption>
     </figure>
     <div class="scroll">
       <table>
@@ -1260,6 +1261,40 @@
     <p>The Adafruit bq24074 charger (ID 4755) charges the cells off the breadboard. Plug a cell's JST lead into its battery socket and power it from USB-C. It charges at 1 A by default (500 mA or 1.5 A by solder jumper), against about 100 mA from the XIAO's own charger, so a 2200 mAh cell takes a few hours instead of about a day. Charge both cells before the first run. It also has a JST load socket that can power a node while a cell tops up, and the same board is the charger in the rev B carrier design.</p>
   </section>
 
+
+  <section>
+    <h2>Parts for this rig</h2>
+    <div class="scroll">
+      <table>
+<thead><tr><th>Part</th><th>Qty</th><th>Status</th></tr></thead><tbody>
+<tr><td>Half-size breadboard with jumpers (Adafruit 3314)</td><td>2</td><td>ordered</td></tr>
+<tr><td>18650 cell with JST lead (1781) and JST-PH breakout (1862)</td><td>2 each</td><td>ordered</td></tr>
+<tr><td>Mini PIR (Adafruit 4871)</td><td>2</td><td>ordered</td></tr>
+<tr><td>AM312 mini PIR (HC-SR312)</td><td>5</td><td>owned</td></tr>
+<tr><td>XIAO ESP32-S3 Sense (camera)</td><td>1</td><td>owned</td></tr>
+<tr><td>XIAO nRF52840, trigger and PIR boards</td><td>2</td><td>borrowed from LoRa stacks; two new ones to order from Seeed ($9.99 each)</td></tr>
+<tr><td>MiniBoost 5 V 1 A (Adafruit 4654)</td><td>1 per camera rig</td><td><b>not ordered yet</b> ($3.95)</td></tr>
+<tr><td>bq24074 charger (Adafruit 4755)</td><td>1</td><td><b>not ordered yet</b> ($14.95)</td></tr>
+<tr><td>Schottky diode, 40 V 1 A or better</td><td>1</td><td>owned (check the type)</td></tr>
+<tr><td>470 µF and 10 µF capacitors (0.1 µF is Adafruit 753)</td><td>1 each</td><td>470 µF and 10 µF still to find</td></tr>
+<tr><td>1S protection boards (3 A / 4 A)</td><td>10</td><td>owned; bench-check before use</td></tr>
+<tr><td>18650 wire-lead holders</td><td>8</td><td>owned</td></tr>
+<tr><td>Multimeter</td><td>1</td><td>owned</td></tr>
+<tr><td>Logic analyzer and microamp meter</td><td>1 each</td><td>still to choose</td></tr>
+</tbody></table>
+    </div>
+    <p class="small">Full list with prices: notes/ares/2026-10/combined-parts-list.csv in the brain repo.</p>
+  </section>
+
+  <section>
+    <h2>Before the first power-up</h2>
+    <ul class="steps">
+      <li><b>Cell and protection.</b> The 1781 cells may already have their own protection; read the label. If you use a bare cell in an owned wire-lead holder instead, put a 1S protection board between the cell and the rails (cell to B+ and B−, load to P+ and P−; the XIAO BAT− goes to P−). First check the board on the bench with a current-limited supply and a meter: the overcharge, overdischarge and overcurrent cutoffs, and the idle drain with the microamp meter. Do not stack a protection board on a cell that already has one.</li>
+      <li><b>Polarity.</b> Check the JST breakout's + and − marking against the cell's red and black wires.</li>
+      <li><b>MiniBoost EN.</b> With the boost alone on the rails, check whether EN floats high or low and read the output with a meter before the S3 is connected.</li>
+    </ul>
+  </section>
+
   <section>
     <h2>What the firmware does on this rig</h2>
     <ul class="steps">
@@ -1275,7 +1310,10 @@
       <li>Charge both cells. Then the PIR node alone: flash it, check the PIR output on D0, and measure sleep and transmit current.</li>
       <li>Camera node, boost only: build the rails, the boost and the Schottky (wires 1, 2, 3, 6, 7, 9). With a meter, check the output is 0 V with EN low and about 5 V with EN high.</li>
       <li>Add the trigger nRF and EN (wires 10, 12), flash it, and confirm it receives the PIR node's packets and switches the boost.</li>
-      <li>Add the camera (wires 4, 5, 11), flash the timing firmware, and read the boot-to-verdict log. Then move the PIR node out to 20 m for the link tests.</li>
+      <li>Add the camera (wires 4, 5, 11), flash the timing firmware, and read the boot-to-verdict log.</li>
+      <li>IR test: flash the <code>camera_view</code> env, open the live view, and point a TV remote at the lens while pressing a button. A bright purple-white spot means the camera passes near-IR and an 850 nm lamp will work; if not, a NoIR camera module is needed. Do this before buying any lamp.</li>
+      <li>Setup mode: with the camera on USB, add jumper 14 (camera 3V3 to D1), reset, join the <code>ew-camera</code> Wi-Fi network (the 2.4 GHz antenna must be fitted) and open http://192.168.4.1/. Check the settings page, the live view and the session log, then remove the jumper.</li>
+      <li>Move the PIR node out to 20 m for the link tests.</li>
     </ol>
   </section>
 
@@ -1283,7 +1321,8 @@
     <h2>Left out of this rig</h2>
     <ul class="steps">
       <li><b>MeshCore nRF and the Wio-SX1262.</b> It joins last, after the link, boost and camera are proven.</li>
-      <li><b>IR gate.</b> It needs a TO-220 MOSFET and spare columns, and the detection chain should work first.</li>
+      <li><b>IR gate.</b> The trigger nRF switches the lamp together with the boost EN, so it needs a spare trigger-nRF pin, a logic-level MOSFET and a small trigger-node firmware change that is not written yet. Do it after the IR test and once the detection chain works.</li>
+      <li><b>SETUP/RUN switch.</b> The carrier will have a slide switch from the trigger board's 3V3 to a SETUP node (a Schottky into the boost EN and 10 k to camera D1). On the bench the jumper stands in for it.</li>
       <li><b>Charger and solar on the board.</b> The bq24074 charges the cells on its own, off the breadboard. It joins the carrier in rev B, with solar.</li>
     </ul>
   </section>
