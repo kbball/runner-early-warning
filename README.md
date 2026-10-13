@@ -23,9 +23,10 @@ now organised per target:
 - `pir-node/` XIAO nRF52840 + PIR: trigger and heartbeat beacons (written and compiles; not run on hardware yet).
 - `trigger-node/` XIAO nRF52840 on the camera node: BLE scanner, drives the boost EN, reads the camera's UART,
   logs everything over USB serial (written and compiles; not run on hardware yet).
+- `camera-node/` XIAO ESP32-S3 Sense camera: boots on power-up, sends the `EW,...` lines, grabs frames, stub detector
+  (written and compiles; not run on hardware yet).
 - `common/` shared code with host unit tests (`cd common && pio test -e native`): `TriggerPacket` (the BLE packet),
-  `CameraMsg` (the camera's UART lines), `TriggerLogic` (packet-group tracking and the enable window), plus the
+  `CameraMsg` (the camera's UART lines), `TriggerLogic` (packet-group tracking and the enable window), `MeshCoreFrames` (companion-protocol frames), plus the
   XIAO nRF52840 board definition used by both nRF projects.
 - `hardware/` KiCad project and schematic generator for the carrier board.
-- Still to write: the ESP32-S3 camera firmware (stages 1-4 above), now printing the `EW,...` lines the trigger
-  board reads, and the MeshCore board's UART hook.
+- Still to write: a real person-detection model for the camera (stage 3 above), and the MeshCore board's UART patch.

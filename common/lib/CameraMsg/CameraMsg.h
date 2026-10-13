@@ -13,6 +13,7 @@
 
 #include <stddef.h>
 #include <stdint.h>
+#include <stdio.h>
 
 namespace ew {
 
@@ -58,6 +59,29 @@ inline bool takeWord(const char*& s, const char* word) {
 }
 
 }  // namespace detail
+
+// Formats m as one line without a newline, the inverse of parseCameraLine. Returns the length written,
+// or 0 if the buffer is too small.
+inline size_t formatCameraLine(const CameraMsg& m, char* out, size_t cap) {
+  int n = 0;
+  const unsigned long ms = static_cast<unsigned long>(m.camMs);
+  switch (m.type) {
+    case CameraMsgType::Boot:
+      n = snprintf(out, cap, "EW,BOOT,%lu", ms);
+      break;
+    case CameraMsgType::Frame:
+      n = snprintf(out, cap, "EW,FRAME,%lu,%lu", ms, static_cast<unsigned long>(m.frame));
+      break;
+    case CameraMsgType::Verdict:
+      n = snprintf(out, cap, "EW,VERDICT,%lu,%s,%lu", ms, m.person ? "PERSON" : "NONE",
+                   static_cast<unsigned long>(m.score));
+      break;
+    case CameraMsgType::Done:
+      n = snprintf(out, cap, "EW,DONE,%lu", ms);
+      break;
+  }
+  return (n > 0 && static_cast<size_t>(n) < cap) ? static_cast<size_t>(n) : 0;
+}
 
 // Parses one line (no trailing newline). False for noise or a malformed message.
 inline bool parseCameraLine(const char* line, CameraMsg& out) {

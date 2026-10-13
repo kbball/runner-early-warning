@@ -1,4 +1,5 @@
 #include <CameraMsg.h>
+#include <string.h>
 #include <unity.h>
 
 using ew::CameraMsg;
@@ -69,8 +70,43 @@ void test_failed_parse_leaves_output_alone() {
   TEST_ASSERT_EQUAL_UINT32(8, m.frame);
 }
 
+void test_format_round_trips_through_the_parser() {
+  const CameraMsg cases[] = {
+      {CameraMsgType::Boot, 812, 0, false, 0},
+      {CameraMsgType::Frame, 1450, 3, false, 0},
+      {CameraMsgType::Verdict, 2100, 0, true, 87},
+      {CameraMsgType::Verdict, 2200, 0, false, 4},
+      {CameraMsgType::Done, 31000, 0, false, 0},
+  };
+  for (const CameraMsg& in : cases) {
+    char line[64];
+    const size_t n = ew::formatCameraLine(in, line, sizeof line);
+    TEST_ASSERT_GREATER_THAN(0, n);
+    CameraMsg out{};
+    TEST_ASSERT_TRUE(parseCameraLine(line, out));
+    TEST_ASSERT_EQUAL(static_cast<int>(in.type), static_cast<int>(out.type));
+    TEST_ASSERT_EQUAL_UINT32(in.camMs, out.camMs);
+    if (in.type == CameraMsgType::Frame) TEST_ASSERT_EQUAL_UINT32(in.frame, out.frame);
+    if (in.type == CameraMsgType::Verdict) {
+      TEST_ASSERT_EQUAL(in.person, out.person);
+      TEST_ASSERT_EQUAL_UINT32(in.score, out.score);
+    }
+  }
+}
+
+void test_format_text_is_exact_and_rejects_small_buffer() {
+  char line[64];
+  const CameraMsg v{CameraMsgType::Verdict, 2100, 0, true, 87};
+  TEST_ASSERT_EQUAL(strlen("EW,VERDICT,2100,PERSON,87"), ew::formatCameraLine(v, line, sizeof line));
+  TEST_ASSERT_EQUAL_STRING("EW,VERDICT,2100,PERSON,87", line);
+  char tiny[8];
+  TEST_ASSERT_EQUAL(0, ew::formatCameraLine(v, tiny, sizeof tiny));
+}
+
 int main(int, char**) {
   UNITY_BEGIN();
+  RUN_TEST(test_format_round_trips_through_the_parser);
+  RUN_TEST(test_format_text_is_exact_and_rejects_small_buffer);
   RUN_TEST(test_boot);
   RUN_TEST(test_frame);
   RUN_TEST(test_verdict_person_and_none);
