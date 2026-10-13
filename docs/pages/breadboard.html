@@ -90,7 +90,7 @@
     <h2>Camera node</h2>
     <figure>
       <div class="scroll">
-<svg viewBox="0 0 760 610" role="img" aria-label="Top view of a half-size breadboard for the camera node. The camera XIAO ESP32-S3 sits at the left, the MiniBoost in the middle, and the trigger XIAO nRF52840 at the right with USB to the computer. An 18650 cell feeds the bottom rails. Wires carry battery, 5 volt, ground, boost enable and UART.">
+<svg viewBox="0 0 760 610" role="img" aria-label="Top view of a half-size breadboard for the camera node. The camera XIAO ESP32-S3 sits at the left, the MiniBoost in the middle, and the trigger XIAO nRF52840 at the right with USB to the computer. An 18650 cell feeds the bottom rails. Wires carry battery, 5 volt, ground, boost enable and UART. A dashed purple jumper links the camera 3V3 pin to D1 for the setup test.">
 <rect x="40" y="60" width="640" height="400" rx="8" class="bb"/>
 <rect x="40" y="258" width="640" height="14" class="bbgap"/>
 <circle cx="70" cy="150" r="4.2" class="hl"/>
@@ -550,6 +550,7 @@
 <circle cx="110" cy="190" r="8.5" class="ring"/>
 <rect x="126" y="186" width="8" height="8" class="pin"/>
 <text x="130" y="205" text-anchor="middle" class="pn">3V3</text>
+<circle cx="130" cy="190" r="8.5" class="ring"/>
 <rect x="146" y="186" width="8" height="8" class="pin"/>
 <text x="150" y="205" text-anchor="middle" class="pn">D10</text>
 <rect x="166" y="186" width="8" height="8" class="pin"/>
@@ -562,6 +563,7 @@
 <text x="90" y="298" text-anchor="middle" class="pn">D0</text>
 <rect x="106" y="306" width="8" height="8" class="pin"/>
 <text x="110" y="298" text-anchor="middle" class="pn">D1</text>
+<circle cx="110" cy="310" r="8.5" class="ring"/>
 <rect x="126" y="306" width="8" height="8" class="pin"/>
 <text x="130" y="298" text-anchor="middle" class="pn">D2</text>
 <rect x="146" y="306" width="8" height="8" class="pin"/>
@@ -674,13 +676,17 @@
 <circle cx="610" cy="416" r="4.5" fill="#1b1b1b" class="we"/>
 <text x="440" y="212" text-anchor="start" class="wl">EN</text>
 <text x="470" y="352" text-anchor="middle" class="wl">UART TX → RX</text>
+<path d="M130,170 L240,170 Q245,170 245,180 L245,340 Q245,350 235,350 L110,350" class="wo"/><path d="M130,170 L240,170 Q245,170 245,180 L245,340 Q245,350 235,350 L110,350" class="w dash" stroke="#8a4fd6"/>
+<circle cx="130" cy="170" r="4.5" fill="#8a4fd6" class="we"/>
+<circle cx="110" cy="350" r="4.5" fill="#8a4fd6" class="we"/>
+<text x="175" y="366" text-anchor="middle" class="wl">SETUP jumper (test only)</text>
 </svg>
       </div>
       <div class="legend" aria-hidden="true">
         <span><i class="sw red"></i>VBAT</span><span><i class="sw orange"></i>+5V to camera</span><span><i class="sw black"></i>GND</span>
-        <span><i class="sw green"></i>boost EN</span><span><i class="sw blue"></i>UART</span>
+        <span><i class="sw green"></i>boost EN</span><span><i class="sw blue"></i>UART</span><span><i class="sw" style="background:#8a4fd6"></i>SETUP jumper (test only)</span>
       </div>
-      <figcaption>Columns run 1 to 30; rows A to E sit above the centre channel and F to J below. The XIAOs straddle the channel on rows C and G, and the MiniBoost sits on row F with its body over the channel. Orange rings mark pins that carry a wire. The trigger nRF stays on USB for the log, while the camera runs from the 18650 through the boost so its power-up is real. The camera's own USB is for flashing only; the Schottky stops the boost from being back-fed. The cell's JST lead plugs into a small JST-PH breakout (Adafruit ID 1862), which gives breadboard pins for wires 1 and 2.</figcaption>
+      <figcaption>Columns run 1 to 30; rows A to E sit above the centre channel and F to J below. The XIAOs straddle the channel on rows C and G, and the MiniBoost sits on row F with its body over the channel. Orange rings mark pins that carry a wire. The trigger nRF stays on USB for the log, while the camera runs from the 18650 through the boost so its power-up is real. The camera's own USB is for flashing only; the Schottky stops the boost from being back-fed. The cell's JST lead plugs into a small JST-PH breakout (Adafruit ID 1862), which gives breadboard pins for wires 1 and 2. The dashed purple jumper (wire 14) joins the camera's 3V3 pin to D1 for the setup-mode test only; remove it afterwards.</figcaption>
     </figure>
     <div class="scroll">
       <table>
@@ -698,7 +704,7 @@
 <tr><td>11</td><td>Camera D6 TX (H8)</td><td>trigger nRF D7 RX (H23)</td><td><span class='sw blue'></span>blue</td><td>UART, camera to nRF</td></tr>
 <tr><td>12</td><td>Trigger nRF GND (H28)</td><td>GND rail (bottom), col 28</td><td><span class='sw black'></span>black</td><td>GND</td></tr>
 <tr><td>13</td><td>C1 470 µF, C2 10 µF, C3 0.1 µF</td><td>+5V rail ↔ GND rail, cols 5, 7, 9</td><td><span class='sw parts'></span>parts</td><td>5 V decoupling</td></tr>
-<tr><td>14</td><td>Camera 3V3 pin</td><td>Camera D1 pin (GPIO2)</td><td><span class='sw part'></span>jumper, setup test only</td><td>SETUP (high at power-up = setup mode)</td></tr>
+<tr><td>14</td><td>Camera 3V3 pin (B3)</td><td>Camera D1 pin, GPIO2 (I2)</td><td><span class='sw part'></span>jumper, setup test only</td><td>SETUP (high at power-up = setup mode)</td></tr>
       </tbody></table>
     </div>
   </section>
@@ -1232,6 +1238,9 @@
 <circle cx="190" cy="416" r="4.5" fill="#1b1b1b" class="we"/>
 <text x="300" y="118" text-anchor="middle" class="wl">3V3</text>
 <text x="300" y="366" text-anchor="middle" class="wl">PIR OUT</text>
+<rect x="506" y="211" width="96" height="89" rx="5" class="mod" stroke-dasharray="6 4" fill-opacity=".4"/>
+<text x="554" y="236" text-anchor="middle" class="mt">AM312</text><text x="554" y="249" text-anchor="middle" class="pn">HC-SR312 mini PIR</text>
+<text x="554" y="268" text-anchor="middle" class="pn">swap in, same 3 wires</text><text x="554" y="280" text-anchor="middle" class="pn">check silk for pin order</text>
 </svg>
       </div>
       <div class="legend" aria-hidden="true">
