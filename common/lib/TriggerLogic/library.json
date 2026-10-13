@@ -1,0 +1,6 @@
+{
+  "name": "TriggerLogic",
+  "version": "0.1.0",
+  "description": "Packet-group tracking and boost-enable window logic for the trigger board",
+  "build": { "libArchive": false }
+}

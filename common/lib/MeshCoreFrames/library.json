@@ -1,0 +1,6 @@
+{
+  "name": "MeshCoreFrames",
+  "version": "0.1.0",
+  "description": "Builds MeshCore companion-protocol frames (App Start, Send Channel Message)",
+  "build": { "libArchive": false }
+}

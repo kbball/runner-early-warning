@@ -1,0 +1,6 @@
+{
+  "name": "CameraMsg",
+  "version": "0.1.0",
+  "description": "Parser for the lines the camera prints on its UART for the trigger board",
+  "build": { "libArchive": false }
+}

@@ -1,0 +1,76 @@
+
+  /* Layout: breadboard figure first, then wiring table, bring-up order, and what this prototype leaves out. */
+  :root {
+    --bg: #f2f4f0; --fg: #19211d; --muted: #55625b; --line: #cdd4cd; --panel: #e8ece6; --accent: #b77712;
+    --bb: #e9e4d4; --bbgap: #d5cfbc; --hl: #3a3c38; --lab: #6c6a5e; --wire-edge: rgba(0,0,0,.28);
+    --mod: #26323a; --mod-edge: #6f808b; --txt: #eef2e6; --pin: #cdb869; --ring: #e8821c;
+    --sans: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+    --mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0e1411; --fg: #e3e9e4; --muted: #94a199; --line: #28332d; --panel: #16201b; --accent: #e0a640;
+      --bb: #2b2e2a; --bbgap: #1f221f; --hl: #0b0d0b; --lab: #9a9888; --wire-edge: rgba(255,255,255,.55); color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0e1411; --fg: #e3e9e4; --muted: #94a199; --line: #28332d; --panel: #16201b; --accent: #e0a640;
+    --bb: #2b2e2a; --bbgap: #1f221f; --hl: #0b0d0b; --lab: #9a9888; --wire-edge: rgba(255,255,255,.55); color-scheme: dark;
+  }
+  body { background: var(--bg); color: var(--fg); font-family: var(--sans); font-size: 16px; line-height: 1.55; padding-inline: 16px; padding-block: 28px 56px; }
+  main { max-width: 900px; margin: 0 auto; display: flex; flex-direction: column; gap: 30px; }
+  h1 { font-size: clamp(1.6rem, 4vw, 2.2rem); line-height: 1.15; margin: 0; font-weight: 600; text-wrap: balance; }
+  h2 { font-size: 1.05rem; margin: 0 0 8px; font-weight: 600; }
+  p { margin: 0; max-width: 66ch; }
+  .lede { color: var(--muted); font-size: 1.05rem; margin-top: 10px; }
+  .tag { font-family: var(--mono); font-size: .75rem; letter-spacing: .08em; text-transform: uppercase; color: var(--accent); margin-bottom: 10px; }
+  section { display: flex; flex-direction: column; gap: 10px; }
+  figure { margin: 0; display: flex; flex-direction: column; gap: 10px; }
+  .scroll { overflow-x: auto; border-radius: 6px; }
+  .scroll svg { display: block; min-width: 640px; width: 100%; height: auto; }
+  figcaption, .small { color: var(--muted); font-size: .9rem; max-width: 72ch; }
+  .legend { display: flex; flex-wrap: wrap; gap: 6px 18px; font-family: var(--mono); font-size: .78rem; color: var(--muted); }
+  .legend span { display: inline-flex; align-items: center; gap: 7px; }
+  .sw { display: inline-block; width: 22px; height: 6px; border-radius: 3px; margin-right: 6px; vertical-align: middle; background: #888; box-shadow: 0 0 0 1px var(--wire-edge); }
+  .sw.red { background: #d6392e; } .sw.black { background: #1b1b1b; } .sw.orange { background: #e8821c; }
+  .sw.green { background: #2f9e4f; } .sw.blue { background: #2f6fd6; } .sw.yellow { background: #e6c619; } .sw.white { background: #f4f4f4; }
+  .sw.part, .sw.parts { background: transparent; box-shadow: none; }
+  table { border-collapse: collapse; width: 100%; min-width: 620px; font-size: .88rem; }
+  th, td { text-align: left; padding: 6px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { font-family: var(--mono); font-size: .72rem; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+  td:first-child { font-family: var(--mono); color: var(--muted); }
+  ol.steps, ul.steps { margin: 0; padding-left: 1.2rem; display: flex; flex-direction: column; gap: 6px; max-width: 70ch; }
+  .note { background: var(--panel); border-radius: 6px; padding: 12px 14px; font-size: .9rem; color: var(--muted); max-width: 72ch; }
+  svg text { font-family: var(--mono); }
+  .bb { fill: var(--bb); stroke: var(--line); stroke-width: 1.5; }
+  .bbgap { fill: var(--bbgap); }
+  .hl { fill: var(--hl); }
+  .num { fill: var(--lab); font-size: 9px; }
+  .rail { fill: var(--lab); font-size: 9px; }
+  .rl-p { stroke: #d6392e; stroke-width: 1.4; opacity: .7; }
+  .rl-m { stroke: #2f6fd6; stroke-width: 1.4; opacity: .7; }
+  .mod { fill: var(--mod); stroke: var(--mod-edge); stroke-width: 1.5; fill-opacity: .95; }
+  .usb { fill: #b9c0c3; stroke: #7d8588; }
+  .cam { fill: #1c2123; stroke: var(--mod-edge); }
+  .lens { fill: none; stroke: var(--mod-edge); stroke-width: 2; } .lens2 { fill: var(--mod-edge); }
+  .ind { fill: #15191b; stroke: var(--mod-edge); }
+  .ant { stroke: var(--txt); stroke-width: 2; }
+  .mt { fill: var(--txt); font-size: 11.5px; font-weight: 500; }
+  .pn { fill: var(--txt); font-size: 8.5px; }
+  .pn2 { fill: var(--fg); font-size: 9.5px; }
+  .pin { fill: var(--pin); }
+  .ring { fill: none; stroke: var(--ring); stroke-width: 1.6; }
+  .lead { stroke: #aab0b2; stroke-width: 2.2; }
+  .leg { fill: #aab0b2; }
+  .dio { fill: #20262a; stroke: #000; stroke-opacity: .5; } .band { fill: #c9d0d3; }
+  .cap { fill: #20262a; stroke: var(--mod-edge); stroke-width: 1.4; }
+  .ceram { fill: #c9a06a; stroke: #7b5d33; }
+  .dome { fill: #efece4; stroke: #8a8678; stroke-width: 1.5; }
+  .wo { fill: none; stroke: var(--wire-edge); stroke-width: 6.4; stroke-linecap: round; }
+  .w { fill: none; stroke-width: 3.6; stroke-linecap: round; }
+  .w.dash { stroke-dasharray: 7 5; }
+  .we { stroke: var(--wire-edge); stroke-width: 1; }
+  .wl { fill: var(--fg); font-size: 9.5px; font-weight: 500; }
+  .wl2 { fill: var(--muted); font-size: 8.5px; }
+
+  .dk { fill: #2b2b25; font-size: 9px; }

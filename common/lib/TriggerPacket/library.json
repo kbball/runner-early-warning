@@ -1,0 +1,6 @@
+{
+  "name": "TriggerPacket",
+  "version": "0.1.0",
+  "description": "Trigger/heartbeat packet shared by the PIR node and the camera node's trigger board",
+  "build": { "libArchive": false }
+}
