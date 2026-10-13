@@ -83,14 +83,14 @@
   <header>
     <div class="tag">Two-node test rig · breadboard layout</div>
     <h1>Early-warning breadboard</h1>
-    <p class="lede">The rig from the test plan, on two half-size breadboards: a camera node with one nRF (the trigger board) and a PIR node 20 m away. MeshCore is left out on purpose. The camera's verdict goes to the trigger nRF, which writes everything to a USB serial log. Until the two new XIAO nRF52840 boards arrive from Seeed, the trigger and PIR nodes run on boards borrowed from the LoRa stacks; re-flash MeshCore on those before putting them back.</p>
+    <p class="lede">The rig from the test plan, on two half-size breadboards: a camera node with one nRF (the trigger board) and a PIR node 20 m away. The camera's verdict goes to the trigger nRF, which writes everything to a USB serial log, and to the MeshCore stack (XIAO nRF52840 plus Wio-SX1262), which sits beside the breadboard on its own USB and joins last. Until the two new XIAO nRF52840 boards arrive from Seeed, the trigger and PIR nodes run on boards borrowed from the LoRa stacks; re-flash MeshCore on those before putting them back.</p>
   </header>
 
   <section>
     <h2>Camera node</h2>
     <figure>
       <div class="scroll">
-<svg viewBox="0 0 760 610" role="img" aria-label="Top view of a half-size breadboard for the camera node. The camera XIAO ESP32-S3 sits at the left, the MiniBoost in the middle, and the trigger XIAO nRF52840 at the right with USB to the computer. An 18650 cell feeds the bottom rails. Wires carry battery, 5 volt, ground, boost enable and UART. A dashed purple jumper links the camera 3V3 pin to D1 for the setup test.">
+<svg viewBox="0 0 760 610" role="img" aria-label="Top view of a half-size breadboard for the camera node. The camera XIAO ESP32-S3 sits at the left, the MiniBoost in the middle, and the trigger XIAO nRF52840 at the right with USB to the computer. An 18650 cell feeds the bottom rails. Wires carry battery, 5 volt, ground, boost enable and UART. A dashed purple jumper links the camera 3V3 pin to D1 for the setup test. The MeshCore stack sits below the breadboard on its own USB with two wires: ground and the UART receive.">
 <rect x="40" y="60" width="640" height="400" rx="8" class="bb"/>
 <rect x="40" y="258" width="640" height="14" class="bbgap"/>
 <circle cx="70" cy="150" r="4.2" class="hl"/>
@@ -680,6 +680,24 @@
 <circle cx="130" cy="170" r="4.5" fill="#8a4fd6" class="we"/>
 <circle cx="110" cy="350" r="4.5" fill="#8a4fd6" class="we"/>
 <text x="175" y="366" text-anchor="middle" class="wl">SETUP jumper (test only)</text>
+<rect x="440" y="500" width="250" height="70" rx="6" class="mod"/>
+<rect x="684" y="520" width="16" height="30" rx="3" class="usb"/>
+<text x="590" y="524" text-anchor="middle" class="mt">MeshCore stack</text>
+<text x="590" y="538" text-anchor="middle" class="pn">XIAO nRF52840 + Wio-SX1262</text>
+<text x="590" y="554" text-anchor="middle" class="pn">fit the LoRa antenna before power</text>
+<text x="565" y="588" text-anchor="middle" class="pn">USB to the computer: power + log</text>
+<rect x="470" y="496" width="8" height="8" class="pin"/>
+<circle cx="474" cy="500" r="8.5" class="ring"/>
+<text x="460" y="520" text-anchor="middle" class="pn">D7 RX</text>
+<rect x="490" y="496" width="8" height="8" class="pin"/>
+<circle cx="494" cy="500" r="8.5" class="ring"/>
+<text x="506" y="520" text-anchor="middle" class="pn">GND</text>
+<path d="M510,350 C 522,420 480,440 474,500" class="wo"/><path d="M510,350 C 522,420 480,440 474,500" class="w" stroke="#2f6fd6"/>
+<circle cx="510" cy="350" r="4.5" fill="#2f6fd6" class="we"/>
+<circle cx="474" cy="500" r="4.5" fill="#2f6fd6" class="we"/>
+<path d="M630,416 C 630,452 502,448 494,500" class="wo"/><path d="M630,416 C 630,452 502,448 494,500" class="w" stroke="#1b1b1b"/>
+<circle cx="630" cy="416" r="4.5" fill="#1b1b1b" class="we"/>
+<circle cx="494" cy="500" r="4.5" fill="#1b1b1b" class="we"/>
 </svg>
       </div>
       <div class="legend" aria-hidden="true">
@@ -705,6 +723,8 @@
 <tr><td>12</td><td>Trigger nRF GND (H28)</td><td>GND rail (bottom), col 28</td><td><span class='sw black'></span>black</td><td>GND</td></tr>
 <tr><td>13</td><td>C1 470 µF, C2 10 µF, C3 0.1 µF</td><td>+5V rail ↔ GND rail, cols 5, 7, 9</td><td><span class='sw parts'></span>parts</td><td>5 V decoupling</td></tr>
 <tr><td>14</td><td>Camera 3V3 pin (B3)</td><td>Camera D1 pin, GPIO2 (I2)</td><td><span class='sw part'></span>jumper, setup test only</td><td>SETUP (high at power-up = setup mode)</td></tr>
+<tr><td>15</td><td>MeshCore stack D7 RX</td><td>UART net, col 23 (I23)</td><td><span class='sw blue'></span>blue</td><td>UART, camera to both nRFs</td></tr>
+<tr><td>16</td><td>MeshCore stack GND</td><td>GND rail (bottom), col 29</td><td><span class='sw black'></span>black</td><td>GND</td></tr>
       </tbody></table>
     </div>
   </section>
@@ -1277,6 +1297,7 @@
 <tr><td>18650 cell with JST lead (1781) and JST-PH breakout (1862)</td><td>2 each</td><td>ordered</td></tr>
 <tr><td>AM312 mini PIR (HC-SR312)</td><td>1 per PIR node</td><td>owned (5-pack)</td></tr>
 <tr><td>XIAO ESP32-S3 Sense (camera)</td><td>1</td><td>owned</td></tr>
+<tr><td>MeshCore stack (XIAO nRF52840 + Wio-SX1262), LoRa antenna and SMA pigtail</td><td>1</td><td>owned</td></tr>
 <tr><td>XIAO nRF52840, trigger and PIR boards</td><td>2</td><td>borrowed from LoRa stacks; two new ones to order from Seeed ($9.99 each)</td></tr>
 <tr><td>MiniBoost 5 V 1 A (Adafruit 4654)</td><td>1 per camera rig</td><td><b>not ordered yet</b> ($3.95)</td></tr>
 <tr><td>bq24074 charger (Adafruit 4755)</td><td>1</td><td><b>not ordered yet</b> ($14.95)</td></tr>
@@ -1319,13 +1340,14 @@
       <li>IR test: flash the <code>camera_view</code> env, open the live view, and point a TV remote at the lens while pressing a button. A bright purple-white spot means the camera passes near-IR and an 850 nm lamp will work; if not, a NoIR camera module is needed. Do this before buying any lamp.</li>
       <li>Setup mode: with the camera on USB, add jumper 14 (camera 3V3 to D1), reset, join the <code>ew-camera</code> Wi-Fi network (the 2.4 GHz antenna must be fitted) and open http://192.168.4.1/. Check the settings page, the live view and the session log, then remove the jumper.</li>
       <li>Move the PIR node out to 20 m for the link tests.</li>
+      <li>MeshCore stack last: fit the LoRa antenna first (never power the SX1262 without one), add wires 15 and 16, and power the stack from its own USB. It stays on stock MeshCore until the verdict-to-channel-message hook is written; for now confirm it receives the camera's UART lines.</li>
     </ol>
   </section>
 
   <section>
     <h2>Left out of this rig</h2>
     <ul class="steps">
-      <li><b>MeshCore nRF and the Wio-SX1262.</b> It joins last, after the link, boost and camera are proven.</li>
+      <li><b>MeshCore firmware hook.</b> The stack is wired in but the code that turns the UART verdict into a channel message is not written. It also stays on USB power here; in the field it runs from the cell and is always on.</li>
       <li><b>IR gate.</b> The trigger nRF switches the lamp together with the boost EN, so it needs a spare trigger-nRF pin, a logic-level MOSFET and a small trigger-node firmware change that is not written yet. Do it after the IR test and once the detection chain works.</li>
       <li><b>SETUP/RUN switch.</b> The carrier will have a slide switch from the trigger board's 3V3 to a SETUP node (a Schottky into the boost EN and 10 k to camera D1). On the bench the jumper stands in for it.</li>
       <li><b>Charger and solar on the board.</b> The bq24074 charges the cells on its own, off the breadboard. It joins the carrier in rev B, with solar.</li>
