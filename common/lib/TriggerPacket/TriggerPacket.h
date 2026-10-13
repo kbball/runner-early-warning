@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (C) 2026 Kevin Ball
 // Trigger packet shared by the PIR node (sender) and the camera node's trigger board (receiver).
 //
 // Carried as BLE manufacturer-specific advertising data. No Arduino or Nordic headers here, so it

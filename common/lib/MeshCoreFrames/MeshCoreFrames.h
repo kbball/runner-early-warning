@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (C) 2026 Kevin Ball
 // Builds the MeshCore companion-protocol frames the camera sends to the MeshCore nRF over UART, so a
 // detected person becomes a channel message. Host-testable: no Arduino headers.
 //

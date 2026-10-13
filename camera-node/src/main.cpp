@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (C) 2026 Kevin Ball
 // Camera node camera (XIAO ESP32-S3 Sense).
 //
 // Powered only while the trigger board holds the boost EN high. On boot it reports itself on its UART

@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Copyright (C) 2026 Kevin Ball
 """Generate the KiCad schematic for the runner early-warning carrier (rev B).
 
 This writes ew-carrier/ew-carrier.kicad_sch from the net list below, pulling symbol

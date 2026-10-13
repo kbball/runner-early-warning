@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (C) 2026 Kevin Ball
 // PIR node (XIAO nRF52840).
 //
 // Watches a PIR on D0. On motion it advertises a short burst of Trigger packets; every

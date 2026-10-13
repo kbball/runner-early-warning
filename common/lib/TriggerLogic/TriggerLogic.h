@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (C) 2026 Kevin Ball
 // Pure logic for the trigger board, kept free of Arduino and Nordic headers so it is unit tested on the host.
 //
 //   GroupTracker  - collapses a burst of identical-seq packets into one group, counts the packets heard in it,

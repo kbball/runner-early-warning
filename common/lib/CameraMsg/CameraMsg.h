@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (C) 2026 Kevin Ball
 // Lines the camera (ESP32-S3) prints on its UART for the trigger board to read.
 //
 // The ESP32-S3 ROM also prints boot noise on the same UART at power-up, so every real message

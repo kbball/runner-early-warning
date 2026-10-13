@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (C) 2026 Kevin Ball
 // Camera node trigger board (XIAO nRF52840).
 //
 // Always on. Scans for the PIR node's BLE advertising packets (see TriggerPacket.h). When a new

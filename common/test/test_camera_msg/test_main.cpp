@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (C) 2026 Kevin Ball
 #include <CameraMsg.h>
 #include <string.h>
 #include <unity.h>
